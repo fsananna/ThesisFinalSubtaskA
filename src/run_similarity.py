@@ -17,11 +17,13 @@ for i in range(len(dataset)):
     if sample is None:
         continue
     ranked_indices = rank_images(sample["sentence"], sample["image_vectors"], device)
-    top1_acc, ndcg = evaluate_ranking(sample["actual_order"], ranked_indices, sample["img_to_idx"])
+    # Use shuffled_order for evaluation instead of actual_order
+    top1_acc, ndcg = evaluate_ranking(sample["shuffled_order"], ranked_indices, sample["img_to_idx"])
     results.append({
         "idiom": sample["idiom"],
         "sentence": sample["sentence"],
         "actual_order": sample["actual_order"],
+        "shuffled_order": sample["shuffled_order"],
         "ranked_order": [sample["idx_to_img"][i] for i in ranked_indices],
         "top1_acc": top1_acc,
         "ndcg": ndcg
@@ -31,6 +33,7 @@ for result in results[:5]:
     print(f"Idiom: {result['idiom']}")
     print(f"Sentence: {result['sentence']}")
     print(f"Actual Order: {result['actual_order']}")
+    print(f"Shuffled Order: {result['shuffled_order']}")
     print(f"Ranked Order: {result['ranked_order']}")
     print(f"Top-1 Accuracy: {result['top1_acc']}")
     print(f"NDCG: {result['ndcg']}\n")
